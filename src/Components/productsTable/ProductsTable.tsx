@@ -3,11 +3,11 @@ import { Product } from '../../features/products/models';
 import './ProductsTable.css';
 import Button from '../button/Button';
 
-interface Props {
+interface ProductsTableProps {
   data: Product[];
 }
 
-const ProductsTable: React.FC<Props> = ({ data }) => {
+const ProductsTable: React.FC<ProductsTableProps> = ({ data }) => {
   const pageSize = 5;
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -64,7 +64,7 @@ const ProductsTable: React.FC<Props> = ({ data }) => {
           value={searchTerm}
           onChange={(e) => handleSearch(e.target.value)}
         />
-        <Button>Agregar</Button>
+        <Button onClick={() => console.log('button')}>Agregar</Button>
       </div>
       <div className="products-table-container">
         <table className="products-table">
