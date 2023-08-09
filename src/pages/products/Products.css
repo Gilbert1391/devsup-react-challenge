@@ -1,0 +1,9 @@
+.products-table-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+.products-table-container {
+  background-color: white;
+  padding: 20px;
+}
