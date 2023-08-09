@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Product } from '../../features/products/models';
 import './ProductsTable.css';
 import Button from '../button/Button';
+import ContextMenu, { ContextMenuOption } from '../contextMenu/ContextMenu';
 
 interface ProductsTableProps {
   data: Product[];
@@ -14,6 +15,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ data }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
+    console.log('currentPage', currentPage);
     paginateProducts(data, currentPage);
   }, [data]);
 
@@ -54,6 +56,14 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ data }) => {
     }
   };
 
+  const contextMenuOptions: ContextMenuOption[] = useMemo(
+    () => [
+      { label: 'Editar', onClick: () => console.log('dispatch update') },
+      { label: 'Eliminar', onClick: () => console.log('dispatch delete') },
+    ],
+    [],
+  );
+
   return (
     <>
       <div className="products-table-action-header">
@@ -85,7 +95,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ data }) => {
                   <img
                     src={p.logo}
                     style={{
-                      width: '30%',
+                      width: '50px',
                     }}
                   />
                 </td>
@@ -93,7 +103,9 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ data }) => {
                 <td>{p.description}</td>
                 <td>{p.date_release}</td>
                 <td>{p.date_revision}</td>
-                <td>...</td>
+                <td>
+                  <ContextMenu options={contextMenuOptions} />
+                </td>
               </tr>
             ))}
           </tbody>
