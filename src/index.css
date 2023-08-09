@@ -18,3 +18,9 @@ body {
   color: #1c1c1d;
   background-color: #f4f4f4;
 }
+
+.input {
+  border-radius: 5px;
+  border: 1px solid black;
+  padding: 9px;
+}

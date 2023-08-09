@@ -19,15 +19,7 @@ const Products = () => {
 
   return (
     <Page>
-      <>
-        <div className="products-table-header">
-          <div>Search bar</div>
-          <div>Boton Agregar</div>
-        </div>
-        <div className="products-table-container">
-          <ProductsTable data={products} />
-        </div>
-      </>
+      <ProductsTable data={products} />
     </Page>
   );
 };
