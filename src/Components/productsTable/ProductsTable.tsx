@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Product } from '../../features/products/models';
 import './ProductsTable.css';
+import Button from '../button/Button';
 
 interface Props {
   data: Product[];
@@ -13,13 +14,13 @@ const ProductsTable: React.FC<Props> = ({ data }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    paginateProducts(currentPage);
+    paginateProducts(data, currentPage);
   }, [data]);
 
-  const paginateProducts = (page: number) => {
+  const paginateProducts = (products: Product[], page: number) => {
     const startIndex = (page - 1) * pageSize;
     const endIndex = startIndex + pageSize;
-    const result = data.slice(startIndex, endIndex);
+    const result = products.slice(startIndex, endIndex);
     setFilteredProducts(result);
   };
 
@@ -29,7 +30,7 @@ const ProductsTable: React.FC<Props> = ({ data }) => {
   );
 
   const handlePagination = (page: any) => {
-    paginateProducts(page);
+    paginateProducts(data, page);
     setCurrentPage(page);
   };
 
@@ -39,16 +40,20 @@ const ProductsTable: React.FC<Props> = ({ data }) => {
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
+    // Reset the current page
+    setCurrentPage(1);
+
     if (isWhitespaceString(term)) {
-      paginateProducts(currentPage);
+      paginateProducts(data, 1);
     } else {
       const filteredItems = data.filter((p) =>
         p.name.toLocaleLowerCase().includes(term.toLocaleLowerCase()),
       );
-      setFilteredProducts(filteredItems);
+      // Always display the first page of search results
+      paginateProducts(filteredItems, 1);
     }
-    setCurrentPage(1);
   };
+
   return (
     <>
       <div className="products-table-action-header">
@@ -59,7 +64,7 @@ const ProductsTable: React.FC<Props> = ({ data }) => {
           value={searchTerm}
           onChange={(e) => handleSearch(e.target.value)}
         />
-        <div>Boton Agregar</div>
+        <Button>Agregar</Button>
       </div>
       <div className="products-table-container">
         <table className="products-table">
