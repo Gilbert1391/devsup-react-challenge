@@ -1,21 +1,26 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { Product } from '../../features/products/models';
-import './ProductsTable.css';
+import { useDispatch } from 'react-redux';
 import Button from '../button/Button';
 import ContextMenu, { ContextMenuOption } from '../contextMenu/ContextMenu';
+import { AppDispatch } from '../../store';
+import './ProductsTable.css';
+import { deleteProduct } from '../../features/products/productsSlice';
 
 interface ProductsTableProps {
   data: Product[];
 }
 
 const ProductsTable: React.FC<ProductsTableProps> = ({ data }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const pageSize = 5;
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    console.log('currentPage', currentPage);
+    console.log('page on mounted', currentPage);
     paginateProducts(data, currentPage);
   }, [data]);
 
@@ -56,11 +61,16 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ data }) => {
     }
   };
 
-  const contextMenuOptions: ContextMenuOption[] = useMemo(
-    () => [
-      { label: 'Editar', onClick: () => console.log('dispatch update') },
-      { label: 'Eliminar', onClick: () => console.log('dispatch delete') },
-    ],
+  const contextMenuOptions = useCallback(
+    (product: Product): ContextMenuOption[] => {
+      return [
+        { label: 'Editar', onClick: () => console.log('dispatch update') },
+        {
+          label: 'Eliminar',
+          onClick: () => dispatch(deleteProduct(product.id)),
+        },
+      ];
+    },
     [],
   );
 
@@ -104,7 +114,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ data }) => {
                 <td>{p.date_release}</td>
                 <td>{p.date_revision}</td>
                 <td>
-                  <ContextMenu options={contextMenuOptions} />
+                  <ContextMenu options={contextMenuOptions(p)} />
                 </td>
               </tr>
             ))}

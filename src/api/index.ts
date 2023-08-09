@@ -35,7 +35,7 @@ const put = async (data: Product): Promise<Product[]> =>
   }).then((response) => response.json());
 
 const deleteProduct = async (id: string): Promise<string> =>
-  await fetch(`${BASE_URL}?${id}`, {
+  await fetch(`${BASE_URL}?id=${id}`, {
     method: 'DELETE',
     headers: {
       ...COMMON_HEADERS,

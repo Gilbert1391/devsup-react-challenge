@@ -17,22 +17,31 @@ const initialState: ProductState = {
 
 export const fetchProducts = createAsyncThunk<Product[]>(
   `${sliceName}/fetchProducts`,
-  api.getAll,
+  async () => {
+    return await api.getAll();
+  },
 );
 
 export const createProduct = createAsyncThunk<Product[], Product>(
   `${sliceName}/createProduct`,
-  api.post,
+  async (product: Product) => {
+    return await api.post(product);
+  },
 );
 
 export const updateProduct = createAsyncThunk<Product[], Product>(
   `${sliceName}/updateProduct`,
-  api.put,
+  async (product: Product) => {
+    return await api.put(product);
+  },
 );
 
 export const deleteProduct = createAsyncThunk<string, string>(
   `${sliceName}/deleteProduct`,
-  api.delete,
+  async (id: string) => {
+    await api.delete(id);
+    return id;
+  },
 );
 
 export const productSlice = createSlice({
