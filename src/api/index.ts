@@ -16,6 +16,35 @@ const getAll = async (): Promise<Product[]> =>
     },
   }).then((response) => response.json());
 
+const post = async (data: Product): Promise<Product[]> =>
+  await fetch(`${BASE_URL}`, {
+    method: 'POST',
+    headers: {
+      ...COMMON_HEADERS,
+    },
+    body: JSON.stringify(data),
+  }).then((response) => response.json());
+
+const put = async (data: Product): Promise<Product[]> =>
+  await fetch(`${BASE_URL}`, {
+    method: 'PUT',
+    headers: {
+      ...COMMON_HEADERS,
+    },
+    body: JSON.stringify(data),
+  }).then((response) => response.json());
+
+const deleteProduct = async (id: string): Promise<string> =>
+  await fetch(`${BASE_URL}?${id}`, {
+    method: 'DELETE',
+    headers: {
+      ...COMMON_HEADERS,
+    },
+  }).then(() => id);
+
 export default {
   getAll,
+  post,
+  put,
+  delete: deleteProduct,
 };
