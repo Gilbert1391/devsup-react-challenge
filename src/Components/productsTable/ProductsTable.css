@@ -1,3 +1,17 @@
+.products-table-action-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+.products-table-action-header input {
+  flex: 0.2;
+}
+
+.products-table-container {
+  background-color: white;
+  padding: 20px;
+}
+
 .products-table {
   width: 100%;
   border-collapse: collapse;
@@ -31,4 +45,8 @@
 .products-table tbody tr td:first-child {
   display: flex;
   justify-content: center;
+}
+
+.products-table tfoot tr td {
+  padding: 15px 0;
 }
