@@ -158,7 +158,7 @@ const ProductDetails = () => {
   const handleFormReset = (event: React.MouseEvent) => {
     event.preventDefault();
     setFormData({
-      id: '',
+      id: paramId ?? '',
       name: '',
       description: '',
       logo: '',
