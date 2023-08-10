@@ -4,9 +4,18 @@ import Page from '../../Components/page/Page';
 import Button from '../../Components/button/Button';
 import styles from './ProductDetails.module.css';
 
+interface FormData {
+  id: string;
+  name: string;
+  description: string;
+  logo: string;
+  releaseDate: string;
+  revisionDate: string;
+}
+
 const ProductDetails = () => {
   const { id } = useParams();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     id: '',
     name: '',
     description: '',
@@ -19,40 +28,37 @@ const ProductDetails = () => {
     name: '',
     description: '',
     logo: '',
+    releaseDate: '',
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // validate form when formData changes
+  // validate form whenever formData changes
   useEffect(() => {
     if (isSubmitted) validateForm();
   }, [formData, isSubmitted]);
 
+  const setFieldError = (
+    errors: any,
+    field: keyof FormData,
+    fieldLabel: string,
+    min?: number,
+    max?: number,
+  ) => {
+    if (!formData[field]) errors[field] = `${fieldLabel} es requerido`;
+    else if (min && formData[field].length < min)
+      errors[field] = `${fieldLabel} mínimo ${min} caracteres`;
+    else if (max && formData[field].length > max)
+      errors[field] = `${fieldLabel} máximo ${max} caracteres`;
+  };
+
   const validateForm = () => {
     const errors: any = {};
+    setFieldError(errors, 'id', 'ID', 3, 10);
+    setFieldError(errors, 'name', 'Nombre', 5, 10);
+    setFieldError(errors, 'description', 'Descripción', 10, 200);
+    setFieldError(errors, 'logo', 'Logo');
+    setFieldError(errors, 'releaseDate', 'Fecha de Liberación');
 
-    if (!formData.id || formData.id.length < 3 || formData.id.length > 10) {
-      errors.id = 'ID must be between 3 and 10 characters';
-    }
-
-    if (
-      !formData.name ||
-      formData.name.length < 5 ||
-      formData.name.length > 10
-    ) {
-      errors.name = 'Name must be between 5 and 10 characters';
-    }
-
-    if (
-      !formData.description ||
-      formData.description.length < 10 ||
-      formData.description.length > 200
-    ) {
-      errors.description = 'Description must be between 10 and 200 characters';
-    }
-
-    if (!formData.logo) {
-      errors.logo = 'Logo is required';
-    }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -92,6 +98,7 @@ const ProductDetails = () => {
   };
 
   const isFormValid = Object.values(formErrors).every((error) => !error);
+  const currentDate = new Date().toISOString().split('T')[0];
 
   return (
     <Page style={{ maxWidth: '750px' }}>
@@ -136,10 +143,18 @@ const ProductDetails = () => {
                 <label className="form-group__label">Fecha Liberación</label>
                 <input
                   type="date"
-                  className="form-group__input"
+                  min={currentDate}
+                  className={`form-group__input ${
+                    formErrors.releaseDate ? 'has-error' : ''
+                  }`}
                   name="releaseDate"
                   onChange={handleOnChange}
                 />
+                {formErrors.releaseDate && (
+                  <div className="form-group__error">
+                    {formErrors.releaseDate}
+                  </div>
+                )}
               </div>
             </div>
             <div className={styles.col}>
