@@ -1,0 +1,23 @@
+.heading {
+  text-align: center;
+  padding: 20px 0;
+  border-bottom: 1px solid;
+}
+
+.row {
+  display: flex;
+  padding: 5px 30px;
+}
+
+.col {
+  width: 50%;
+  padding: 10px;
+}
+
+.footer {
+  width: 32%;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+}

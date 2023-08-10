@@ -19,6 +19,24 @@ body {
   background-color: #f5f6f9;
 }
 
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  padding: 0 5px;
+}
+
+.form-group__label {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.form-group__input {
+  border-radius: 5px;
+  border: 1px solid black;
+  padding: 12px;
+}
+
 .input {
   border-radius: 5px;
   border: 1px solid black;
