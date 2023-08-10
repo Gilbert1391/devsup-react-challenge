@@ -25,6 +25,12 @@ body {
   margin-bottom: 20px;
   padding: 0 5px;
 }
+.form-group__error {
+  color: red;
+  font-weight: 700;
+  margin-top: 5px;
+  font-size: 12px;
+}
 
 .form-group__label {
   font-weight: 700;
@@ -35,6 +41,10 @@ body {
   border-radius: 5px;
   border: 1px solid black;
   padding: 12px;
+}
+
+.form-group__input.has-error {
+  border: 1px solid red;
 }
 
 .input {
