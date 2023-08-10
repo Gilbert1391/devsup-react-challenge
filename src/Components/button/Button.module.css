@@ -10,6 +10,14 @@
   background: #fadf48;
 }
 
+.primary:hover {
+  background: #e0c943;
+}
+
 .secondary {
   background: #e9ecf3;
+}
+
+.secondary:hover {
+  background: #d2d3d8;
 }

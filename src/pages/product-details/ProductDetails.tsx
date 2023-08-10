@@ -162,6 +162,18 @@ const ProductDetails = () => {
     }
   };
 
+  const handleFormReset = (event: React.MouseEvent) => {
+    event.preventDefault();
+    setFormData({
+      id: '',
+      name: '',
+      description: '',
+      logo: '',
+      releaseDate: '',
+      revisionDate: '',
+    });
+  };
+
   const isFormValid: boolean = useMemo(
     () => Object.values(formErrors).every((error) => !error),
     [formErrors],
@@ -297,12 +309,10 @@ const ProductDetails = () => {
           </div>
 
           <div className={styles.footer}>
-            <Button type="secondary" onClick={() => console.log('reset')}>
+            <Button type="secondary" onClick={handleFormReset}>
               Reiniciar
             </Button>
-            <Button onClick={() => {}} disabled={!isFormValid}>
-              Enviar
-            </Button>
+            <Button disabled={!isFormValid}>Enviar</Button>
           </div>
         </form>
       </>

@@ -5,7 +5,7 @@ export interface ButtonProps {
   children: ReactNode;
   disabled?: boolean;
   type?: 'primary' | 'secondary';
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const Button: React.FC<ButtonProps> = ({

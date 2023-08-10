@@ -68,10 +68,10 @@ describe('Products Slice', () => {
     };
     const action = {
       type: updateProduct.fulfilled,
-      payload: [newProduct],
+      payload: newProduct,
     };
     const state = productsReducer(undefined, action);
-    expect(state.products.find((e) => e.id === action.payload[0].id)).toEqual(
+    expect(state.products.find((e) => e.id === action.payload.id)).toEqual(
       newProduct,
     );
     expect(state.isLoading).toBeFalsy();
@@ -85,14 +85,11 @@ describe('Products Slice', () => {
 
     state = productsReducer(state, {
       type: deleteProduct.fulfilled,
-      payload: '1',
+      payload: '2',
     });
-    const filteredProducts = [productMockData[1]];
-    expect(state).toEqual(
-      expect.objectContaining({
-        products: filteredProducts,
-        isLoading: false,
-      }),
-    );
+    expect(state.products.length).toEqual(2);
+    expect(state.products[0].id).toEqual('1');
+    expect(state.products[1].id).toEqual('3');
+    expect(state.isLoading).toBeFalsy();
   });
 });
