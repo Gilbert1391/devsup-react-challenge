@@ -6,6 +6,7 @@ import Button from '../button/Button';
 import ContextMenu, { ContextMenuOption } from '../contextMenu/ContextMenu';
 import { AppDispatch } from '../../store';
 import { deleteProduct } from '../../features/products/productsSlice';
+import { formatISOToddmmyyyy } from '../../utils/dateUtils';
 import styles from './ProductsTable.module.css';
 
 interface ProductsTableProps {
@@ -71,15 +72,6 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ data }) => {
     ];
   }, []);
 
-  const formatDate = (inputDate: string): string => {
-    const date = new Date(inputDate);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-  };
-
   return (
     <>
       <div className={styles.actionHeader}>
@@ -117,8 +109,8 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ data }) => {
                 </td>
                 <td>{p.name}</td>
                 <td>{p.description}</td>
-                <td>{formatDate(p.date_release)}</td>
-                <td>{formatDate(p.date_revision)}</td>
+                <td>{formatISOToddmmyyyy(p.date_release)}</td>
+                <td>{formatISOToddmmyyyy(p.date_revision)}</td>
                 <td>
                   <ContextMenu options={contextMenuOptions(p.id)} />
                 </td>

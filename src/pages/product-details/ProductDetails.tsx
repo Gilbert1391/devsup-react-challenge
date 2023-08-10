@@ -17,6 +17,7 @@ import {
   productSelector,
   updateProduct,
 } from '../../features/products/productsSlice';
+import { formatISODateToyyyymmdd } from '../../utils/dateUtils';
 import styles from './ProductDetails.module.css';
 
 interface FormData {
@@ -67,8 +68,8 @@ const ProductDetails = () => {
           name: product.name,
           description: product.description,
           logo: product.logo,
-          releaseDate: formatISODateAsYyyyMmDd(product.date_release),
-          revisionDate: formatISODateAsYyyyMmDd(product.date_revision),
+          releaseDate: formatISODateToyyyymmdd(product.date_release),
+          revisionDate: formatISODateToyyyymmdd(product.date_revision),
         };
         setFormData(data);
       }
@@ -78,14 +79,6 @@ const ProductDetails = () => {
   useEffect(() => {
     if (isSubmitted) validateForm();
   }, [formData, isSubmitted]);
-
-  const formatISODateAsYyyyMmDd = (inputDate: string) => {
-    const date = new Date(inputDate);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
 
   const setFieldError = (
     errors: any,
