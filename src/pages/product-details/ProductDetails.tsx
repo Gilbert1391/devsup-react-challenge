@@ -6,12 +6,17 @@ import React, {
   useMemo,
 } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Page from '../../Components/page/Page';
 import Button from '../../Components/button/Button';
 import { Product } from '../../features/products/models';
 import { AppDispatch } from '../../store';
-import { createProduct } from '../../features/products/productsSlice';
+import {
+  createProduct,
+  fetchProducts,
+  productSelector,
+  updateProduct,
+} from '../../features/products/productsSlice';
 import styles from './ProductDetails.module.css';
 
 interface FormData {
@@ -24,9 +29,10 @@ interface FormData {
 }
 
 const ProductDetails = () => {
-  const { id } = useParams();
+  const { id: paramId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const { products } = useSelector(productSelector);
 
   const [formData, setFormData] = useState<FormData>({
     id: '',
@@ -45,9 +51,41 @@ const ProductDetails = () => {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  // if page is refresh in this route, fetch products
+  useEffect(() => {
+    if (!products.length) dispatch(fetchProducts());
+  }, []);
+
+  useEffect(() => {
+    if (paramId) {
+      const product: Product | undefined = products.find(
+        (p) => p.id === paramId,
+      );
+      if (product) {
+        const data: FormData = {
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          logo: product.logo,
+          releaseDate: formatISODateAsYyyyMmDd(product.date_release),
+          revisionDate: formatISODateAsYyyyMmDd(product.date_revision),
+        };
+        setFormData(data);
+      }
+    }
+  }, [paramId, products]);
+
   useEffect(() => {
     if (isSubmitted) validateForm();
   }, [formData, isSubmitted]);
+
+  const formatISODateAsYyyyMmDd = (inputDate: string) => {
+    const date = new Date(inputDate);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   const setFieldError = (
     errors: any,
@@ -101,15 +139,6 @@ const ProductDetails = () => {
     }
   };
 
-  const convertDateToISO = (inputDate: string) => {
-    const parts = inputDate.split('/');
-
-    const [day, month, year] = parts;
-    const formattedDate = new Date(`${year}-${month}-${day}`).toISOString();
-
-    return formattedDate;
-  };
-
   const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitted(true);
@@ -123,8 +152,9 @@ const ProductDetails = () => {
         date_release: formData.releaseDate,
         date_revision: formData.revisionDate,
       };
-      const actionResult = await dispatch(createProduct(request));
-      if (createProduct.fulfilled.match(actionResult)) {
+      const thunk: any = paramId === undefined ? createProduct : updateProduct;
+      const actionResult = await dispatch(thunk(request));
+      if (thunk.fulfilled.match(actionResult)) {
         navigate('/products');
       } else {
         //handle error, by showing toast, etc
@@ -153,6 +183,7 @@ const ProductDetails = () => {
                   ID
                 </label>
                 <input
+                  disabled={paramId !== undefined}
                   id="id"
                   type="text"
                   className={`form-group__input ${
@@ -160,6 +191,7 @@ const ProductDetails = () => {
                   }`}
                   name="id"
                   onChange={handleOnChange}
+                  value={formData.id}
                 />
                 {formErrors.id && (
                   <div className="form-group__error">{formErrors.id}</div>
@@ -178,6 +210,7 @@ const ProductDetails = () => {
                   }`}
                   name="description"
                   onChange={handleOnChange}
+                  value={formData.description}
                 />
                 {formErrors.description && (
                   <div className="form-group__error">
@@ -199,6 +232,7 @@ const ProductDetails = () => {
                   }`}
                   name="releaseDate"
                   onChange={handleOnChange}
+                  value={formData.releaseDate}
                 />
                 {formErrors.releaseDate && (
                   <div className="form-group__error">
@@ -220,6 +254,7 @@ const ProductDetails = () => {
                   }`}
                   name="name"
                   onChange={handleOnChange}
+                  value={formData.name}
                 />
                 {formErrors.name && (
                   <div className="form-group__error">{formErrors.name}</div>
@@ -238,6 +273,7 @@ const ProductDetails = () => {
                   }`}
                   name="logo"
                   onChange={handleOnChange}
+                  value={formData.logo}
                 />
                 {formErrors.logo && (
                   <div className="form-group__error">{formErrors.logo}</div>

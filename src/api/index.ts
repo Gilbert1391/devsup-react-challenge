@@ -26,7 +26,7 @@ const post = async (data: Product): Promise<Product[]> =>
     body: JSON.stringify(data),
   }).then((response) => response.json());
 
-const put = async (data: Product): Promise<Product[]> =>
+const put = async (data: Product): Promise<Product> =>
   await fetch(`${BASE_URL}`, {
     method: 'PUT',
     headers: {

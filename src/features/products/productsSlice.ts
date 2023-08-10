@@ -35,7 +35,7 @@ export const createProduct = createAsyncThunk<
   }
 });
 
-export const updateProduct = createAsyncThunk<Product[], Product>(
+export const updateProduct = createAsyncThunk<Product, Product>(
   `${sliceName}/updateProduct`,
   async (product: Product) => {
     return await api.put(product);
@@ -85,7 +85,7 @@ export const productSlice = createSlice({
       state.isLoading = false;
     });
     builder.addCase(updateProduct.fulfilled, (state, action) => {
-      const newProduct = action.payload[0];
+      const newProduct = action.payload;
       const index = state.products.findIndex((e) => e.id === newProduct.id);
       state.products.splice(index, 1, newProduct);
       state.isLoading = false;
