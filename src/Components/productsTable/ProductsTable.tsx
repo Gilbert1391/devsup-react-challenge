@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { Product } from '../../features/products/models';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { Product } from '../../features/products/models';
 import Button from '../button/Button';
 import ContextMenu, { ContextMenuOption } from '../contextMenu/ContextMenu';
 import { AppDispatch } from '../../store';
-import './ProductsTable.css';
 import { deleteProduct } from '../../features/products/productsSlice';
+import styles from './ProductsTable.module.css';
 
 interface ProductsTableProps {
   data: Product[];
@@ -13,6 +14,7 @@ interface ProductsTableProps {
 
 const ProductsTable: React.FC<ProductsTableProps> = ({ data }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   const pageSize = 5;
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -20,7 +22,6 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ data }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    console.log('page on mounted', currentPage);
     paginateProducts(data, currentPage);
   }, [data]);
 
@@ -47,7 +48,6 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ data }) => {
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
-    // Reset the current page
     setCurrentPage(1);
 
     if (isWhitespaceString(term)) {
@@ -61,22 +61,19 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ data }) => {
     }
   };
 
-  const contextMenuOptions = useCallback(
-    (product: Product): ContextMenuOption[] => {
-      return [
-        { label: 'Editar', onClick: () => console.log('dispatch update') },
-        {
-          label: 'Eliminar',
-          onClick: () => dispatch(deleteProduct(product.id)),
-        },
-      ];
-    },
-    [],
-  );
+  const contextMenuOptions = useCallback((id: string): ContextMenuOption[] => {
+    return [
+      { label: 'Editar', onClick: () => navigate(`/products/${id}`) },
+      {
+        label: 'Eliminar',
+        onClick: () => dispatch(deleteProduct(id)),
+      },
+    ];
+  }, []);
 
   return (
     <>
-      <div className="products-table-action-header">
+      <div className={styles.actionHeader}>
         <input
           type="text"
           placeholder="Search..."
@@ -84,10 +81,10 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ data }) => {
           value={searchTerm}
           onChange={(e) => handleSearch(e.target.value)}
         />
-        <Button onClick={() => console.log('button')}>Agregar</Button>
+        <Button onClick={() => navigate('/new-product')}>Agregar</Button>
       </div>
-      <div className="products-table-container">
-        <table className="products-table">
+      <div className={styles.tableContainer}>
+        <table className={styles.table}>
           <thead>
             <tr>
               <th>Logo</th>
@@ -114,7 +111,7 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ data }) => {
                 <td>{p.date_release}</td>
                 <td>{p.date_revision}</td>
                 <td>
-                  <ContextMenu options={contextMenuOptions(p)} />
+                  <ContextMenu options={contextMenuOptions(p.id)} />
                 </td>
               </tr>
             ))}
