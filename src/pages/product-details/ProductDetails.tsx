@@ -1,4 +1,10 @@
-import React, { useState, FormEvent, ChangeEvent, useEffect } from 'react';
+import React, {
+  useState,
+  FormEvent,
+  ChangeEvent,
+  useEffect,
+  useMemo,
+} from 'react';
 import { useParams } from 'react-router-dom';
 import Page from '../../Components/page/Page';
 import Button from '../../Components/button/Button';
@@ -63,7 +69,7 @@ const ProductDetails = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const populateRevisionDate = (dateVal: string) => {
+  const handleReleaseDate = (dateVal: string) => {
     const releaseDate = new Date(dateVal);
     const revisionDate = new Date(
       releaseDate.getFullYear() + 1,
@@ -72,6 +78,7 @@ const ProductDetails = () => {
     );
     setFormData((prevData) => ({
       ...prevData,
+      releaseDate: dateVal,
       revisionDate: revisionDate.toISOString().substr(0, 10),
     }));
   };
@@ -79,7 +86,7 @@ const ProductDetails = () => {
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name === 'releaseDate') {
-      populateRevisionDate(value);
+      handleReleaseDate(value);
     } else {
       setFormData((prevData) => ({
         ...prevData,
@@ -91,14 +98,19 @@ const ProductDetails = () => {
   const handleFormSubmit = (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitted(true);
-
     if (validateForm()) {
       console.log(formData);
     }
   };
 
-  const isFormValid = Object.values(formErrors).every((error) => !error);
-  const currentDate = new Date().toISOString().split('T')[0];
+  const isFormValid: boolean = useMemo(
+    () => Object.values(formErrors).every((error) => !error),
+    [formErrors],
+  );
+  const currentDate: string = useMemo(
+    () => new Date().toISOString().split('T')[0],
+    [],
+  );
 
   return (
     <Page style={{ maxWidth: '750px' }}>
