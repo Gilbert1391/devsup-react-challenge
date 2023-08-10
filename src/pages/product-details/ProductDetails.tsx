@@ -5,9 +5,13 @@ import React, {
   useEffect,
   useMemo,
 } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import Page from '../../Components/page/Page';
 import Button from '../../Components/button/Button';
+import { Product } from '../../features/products/models';
+import { AppDispatch } from '../../store';
+import { createProduct } from '../../features/products/productsSlice';
 import styles from './ProductDetails.module.css';
 
 interface FormData {
@@ -21,6 +25,9 @@ interface FormData {
 
 const ProductDetails = () => {
   const { id } = useParams();
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState<FormData>({
     id: '',
     name: '',
@@ -38,7 +45,6 @@ const ProductDetails = () => {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // validate form whenever formData changes
   useEffect(() => {
     if (isSubmitted) validateForm();
   }, [formData, isSubmitted]);
@@ -60,7 +66,7 @@ const ProductDetails = () => {
   const validateForm = () => {
     const errors: any = {};
     setFieldError(errors, 'id', 'ID', 3, 10);
-    setFieldError(errors, 'name', 'Nombre', 5, 10);
+    setFieldError(errors, 'name', 'Nombre', 5, 100);
     setFieldError(errors, 'description', 'Descripción', 10, 200);
     setFieldError(errors, 'logo', 'Logo');
     setFieldError(errors, 'releaseDate', 'Fecha de Liberación');
@@ -95,11 +101,34 @@ const ProductDetails = () => {
     }
   };
 
-  const handleFormSubmit = (e: FormEvent) => {
+  const convertDateToISO = (inputDate: string) => {
+    const parts = inputDate.split('/');
+
+    const [day, month, year] = parts;
+    const formattedDate = new Date(`${year}-${month}-${day}`).toISOString();
+
+    return formattedDate;
+  };
+
+  const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitted(true);
     if (validateForm()) {
-      console.log(formData);
+      const { id, name, description, logo } = formData;
+      const request: Product = {
+        id,
+        name,
+        description,
+        logo,
+        date_release: formData.releaseDate,
+        date_revision: formData.revisionDate,
+      };
+      const actionResult = await dispatch(createProduct(request));
+      if (createProduct.fulfilled.match(actionResult)) {
+        navigate('/products');
+      } else {
+        //handle error, by showing toast, etc
+      }
     }
   };
 
@@ -120,8 +149,11 @@ const ProductDetails = () => {
           <div className={styles.row}>
             <div className={styles.col}>
               <div className="form-group">
-                <label className="form-group__label">ID</label>
+                <label className="form-group__label" htmlFor="id">
+                  ID
+                </label>
                 <input
+                  id="id"
                   type="text"
                   className={`form-group__input ${
                     formErrors.id ? 'has-error' : ''
@@ -135,8 +167,11 @@ const ProductDetails = () => {
               </div>
 
               <div className="form-group">
-                <label className="form-group__label">Descripción</label>
+                <label className="form-group__label" htmlFor="description">
+                  Descripción
+                </label>
                 <input
+                  id="description"
                   type="text"
                   className={`form-group__input ${
                     formErrors.description ? 'has-error' : ''
@@ -152,8 +187,11 @@ const ProductDetails = () => {
               </div>
 
               <div className="form-group">
-                <label className="form-group__label">Fecha Liberación</label>
+                <label className="form-group__label" htmlFor="releaseDate">
+                  Fecha Liberación
+                </label>
                 <input
+                  id="releaseDate"
                   type="date"
                   min={currentDate}
                   className={`form-group__input ${
@@ -171,8 +209,11 @@ const ProductDetails = () => {
             </div>
             <div className={styles.col}>
               <div className="form-group">
-                <label className="form-group__label">Nombre</label>
+                <label className="form-group__label" htmlFor="name">
+                  Nombre
+                </label>
                 <input
+                  id="name"
                   type="text"
                   className={`form-group__input ${
                     formErrors.name ? 'has-error' : ''
@@ -186,8 +227,11 @@ const ProductDetails = () => {
               </div>
 
               <div className="form-group">
-                <label className="form-group__label">Logo</label>
+                <label className="form-group__label" htmlFor="logo">
+                  Logo
+                </label>
                 <input
+                  id="logo"
                   type="text"
                   className={`form-group__input ${
                     formErrors.logo ? 'has-error' : ''
@@ -201,8 +245,11 @@ const ProductDetails = () => {
               </div>
 
               <div className="form-group">
-                <label className="form-group__label">Fecha Revisión</label>
+                <label className="form-group__label" htmlFor="revisionDate">
+                  Fecha Revisión
+                </label>
                 <input
+                  id="revisionDate"
                   type="date"
                   className="form-group__input"
                   name="revisionDate"

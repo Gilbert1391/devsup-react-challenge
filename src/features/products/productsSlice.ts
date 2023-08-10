@@ -22,12 +22,18 @@ export const fetchProducts = createAsyncThunk<Product[]>(
   },
 );
 
-export const createProduct = createAsyncThunk<Product[], Product>(
-  `${sliceName}/createProduct`,
-  async (product: Product) => {
+export const createProduct = createAsyncThunk<
+  Product[],
+  Product,
+  { rejectValue: string }
+>(`${sliceName}/createProduct`, async (product: Product, thunkAPI) => {
+  const isValid = await api.validateId(product.id);
+  if (isValid) {
     return await api.post(product);
-  },
-);
+  } else {
+    return thunkAPI.rejectWithValue('Invalid id');
+  }
+});
 
 export const updateProduct = createAsyncThunk<Product[], Product>(
   `${sliceName}/updateProduct`,
